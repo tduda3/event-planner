@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block content %}
+<h2>{{ event.title }}</h2>
+<p><strong>Date/Time:</strong> {{ event.datetime }}</p>
+<p><strong>Location:</strong> {{ event.location }}</p>
+<p>{{ event.description }}</p>
+<button id="rsvp-button" class="btn btn-primary">
+  {% if attending %}Attending{% else %}Attend{% endif %}
+</button>
+{% endblock %}
