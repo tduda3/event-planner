@@ -108,6 +108,40 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       alert("You are now attending!");
     };
+
+    const updateForm = document.getElementById("update-event-form");
+    if (updateForm) {
+      updateForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const id = path.split("/").pop();
+        const f = e.target;
+        const res = await fetch(`${API_BASE}/events/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeader() },
+          body: JSON.stringify({
+            title: f.title.value,
+            datetime: f.datetime.value,
+            location: f.location.value,
+            description: f.description.value,
+          }),
+        });
+        if (res.ok) window.location.reload();
+        else alert("Update failed");
+      };
+    }
+
+    const deleteBtn = document.getElementById("delete-event");
+    if (deleteBtn) {
+      deleteBtn.onclick = async () => {
+        if (!confirm("Delete this event?")) return;
+        const id = path.split("/").pop();
+        await fetch(`${API_BASE}/events/${id}`, {
+          method: "DELETE",
+          headers: authHeader(),
+        });
+        window.location = "/events";
+      };
+    }
   }
 
   if (/^\/users\/\d+$/.test(path)) {

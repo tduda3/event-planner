@@ -131,3 +131,23 @@ def test_event_ics_export(client):
     assert resp.mimetype == 'text/calendar'
     body = resp.data.decode()
     assert 'BEGIN:VCALENDAR' in body
+
+
+def test_event_attendee_count(client):
+    token = register_and_login(client)
+    headers = {'Authorization': f'Bearer {token}'}
+    create = client.post('/api/events/', json=event_payload(), headers=headers)
+    event_id = create.get_json()['id']
+
+    # second user registers
+    token2 = register_and_login(client, username='bob', email='b@example.com')
+    client.post(f'/api/events/{event_id}/register', headers={'Authorization': f'Bearer {token2}'})
+
+    resp = client.get(f'/api/events/{event_id}')
+    assert resp.status_code == 200
+    assert resp.get_json()['attendee_count'] == 1
+
+    list_resp = client.get('/api/events/')
+    assert list_resp.status_code == 200
+    list_data = list_resp.get_json()
+    assert list_data['events'][0]['attendee_count'] == 1
