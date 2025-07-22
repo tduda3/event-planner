@@ -14,6 +14,19 @@ function authHeader() {
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
 
+  const profileLink = document.getElementById("profile-link");
+  if (profileLink) {
+    const token = getToken();
+    if (token) {
+      const payload = JSON.parse(
+        atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+      );
+      const userId = payload.sub || payload.identity;
+      profileLink.href = `/users/${userId}`;
+      profileLink.style.display = "block";
+    }
+  }
+
   if (path === "/register") {
     document.getElementById("register-form").onsubmit = async (e) => {
       e.preventDefault();
