@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ user.username }}'s Profile</h2>
+<h3 class="mt-4">Events I've Created</h3>
+<ul class="list-group mb-4">
+  {% for e in created %}
+  <li class="list-group-item"><a href="/events/{{ e.id }}">{{ e.title }}</a></li>
+  {% else %}
+  <li class="list-group-item">No events.</li>
+  {% endfor %}
+</ul>
+<h3>Events I'm Attending</h3>
+<ul class="list-group">
+  {% for e in attending %}
+  <li class="list-group-item"><a href="/events/{{ e.id }}">{{ e.title }}</a></li>
+  {% else %}
+  <li class="list-group-item">No registrations.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

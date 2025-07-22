@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.event_service import EventService
 from app.schemas import EventSchema
@@ -27,6 +27,15 @@ def get_event(event_id: int):
     """Retrieve a single event by ID."""
     event = EventService.get_event(event_id)
     return jsonify(event_schema.dump(event)), 200
+
+
+@events_bp.route('/<int:event_id>.ics', methods=['GET'])
+def export_event_ics(event_id: int):
+    """Return an iCalendar file for the event."""
+    event = EventService.get_event(event_id)
+    ics = EventService.event_to_ics(event)
+    headers = {'Content-Disposition': f'attachment; filename=event_{event_id}.ics'}
+    return Response(ics, mimetype='text/calendar', headers=headers)
 
 @events_bp.route('/', methods=['POST'])
 @jwt_required()

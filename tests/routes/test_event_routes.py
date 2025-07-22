@@ -98,3 +98,36 @@ def test_delete_event_not_found(client):
     token = register_and_login(client)
     resp = client.delete('/api/events/999', headers={'Authorization': f'Bearer {token}'})
     assert resp.status_code == 404
+
+
+def test_search_and_pagination(client):
+    token = register_and_login(client)
+    headers = {'Authorization': f'Bearer {token}'}
+    # create three events
+    for title in ['Alpha', 'Beta', 'Betamax']:
+        payload = event_payload(title=title)
+        client.post('/api/events/', json=payload, headers=headers)
+
+    resp = client.get('/api/events/?search=Beta&per_page=1&page=1')
+    data = resp.get_json()
+    assert data['total'] == 2
+    assert len(data['events']) == 1
+    assert data['events'][0]['title'] == 'Beta'
+
+    resp = client.get('/api/events/?search=Beta&per_page=1&page=2')
+    data = resp.get_json()
+    assert len(data['events']) == 1
+    assert data['events'][0]['title'] == 'Betamax'
+
+
+def test_event_ics_export(client):
+    token = register_and_login(client)
+    headers = {'Authorization': f'Bearer {token}'}
+    create = client.post('/api/events/', json=event_payload(), headers=headers)
+    event_id = create.get_json()['id']
+
+    resp = client.get(f'/api/events/{event_id}.ics')
+    assert resp.status_code == 200
+    assert resp.mimetype == 'text/calendar'
+    body = resp.data.decode()
+    assert 'BEGIN:VCALENDAR' in body
