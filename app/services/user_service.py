@@ -34,7 +34,7 @@ class UserService:
         user = User.query.filter_by(email=email).first()
         if not user or not check_password_hash(user.password_hash, password):
             raise AuthenticationError('Invalid credentials')
-        token = create_access_token(identity=user.id)
+        token = create_access_token(identity=str(user.id))
         return token
 
     @staticmethod
