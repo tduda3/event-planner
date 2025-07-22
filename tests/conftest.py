@@ -1,5 +1,11 @@
 # tests/conftest.py
+import os
+import sys
 import pytest
+
+# Ensure the app package is importable when tests are run without installation
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from app import create_app, db as _db
 
 @pytest.fixture(scope='session')
