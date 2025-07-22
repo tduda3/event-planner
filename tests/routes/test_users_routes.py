@@ -4,13 +4,13 @@ import pytest
 
 def register_user(client, username='alice', email='alice@example.com', password='password123'):
     return client.post(
-        '/users/register',
+        '/api/users/register',
         json={'username': username, 'email': email, 'password': password}
     )
 
 def login_user(client, email='alice@example.com', password='password123'):
     return client.post(
-        '/users/login',
+        '/api/users/login',
         json={'email': email, 'password': password}
     )
 
@@ -26,7 +26,7 @@ def test_register_user_success(client):
 
 
 def test_register_missing_fields(client):
-    resp = client.post('/users/register', json={'username': 'bob'})
+    resp = client.post('/api/users/register', json={'username': 'bob'})
     assert resp.status_code == 400
     assert 'error' in resp.get_json()
 
@@ -41,7 +41,7 @@ def test_login_success(client):
 def test_login_invalid_credentials(client):
     register_user(client)
     resp = client.post(
-        '/users/login',
+        '/api/users/login',
         json={'email': 'alice@example.com', 'password': 'wrong'}
     )
     assert resp.status_code == 401
@@ -57,7 +57,7 @@ def test_get_user_success(client):
     user_id = 1
 
     resp = client.get(
-        f'/users/{user_id}',
+        f'/api/users/{user_id}',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 200
@@ -67,7 +67,7 @@ def test_get_user_success(client):
 
 
 def test_get_user_unauthorized(client):
-    resp = client.get('/users/1')  # no token
+    resp = client.get('/api/users/1')  # no token
     assert resp.status_code == 401
 
 
@@ -77,7 +77,7 @@ def test_get_user_not_found(client):
     token = login.get_json()['access_token']
 
     resp = client.get(
-        '/users/999',
+        '/api/users/999',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 404

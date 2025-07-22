@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.registration_service import RegistrationService
 from app.schemas import RegistrationSchema
 
-registrations_bp = Blueprint('registrations', __name__)
+registrations_bp = Blueprint('registrations', __name__, url_prefix='/api')
 reg_schema = RegistrationSchema()
 regs_schema = RegistrationSchema(many=True)
 
@@ -12,7 +12,7 @@ regs_schema = RegistrationSchema(many=True)
 @jwt_required()
 def register_event(event_id: int):
     """RSVP current user to an event."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     reg = RegistrationService.register_for_event(user_id, event_id)
     return jsonify(reg_schema.dump(reg)), 201
 
@@ -20,7 +20,7 @@ def register_event(event_id: int):
 @jwt_required()
 def cancel_registration(registration_id: int):
     """Cancel a registration."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     RegistrationService.cancel_registration(registration_id, user_id)
     return jsonify({'message': 'Registration canceled'}), 200
 

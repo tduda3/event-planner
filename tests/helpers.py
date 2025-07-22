@@ -1,10 +1,10 @@
 def register_and_login(client, username='host', email='host@example.com', password='pass1234'):
-    client.post('/users/register', json={
+    client.post('/api/users/register', json={
       'username': username,
       'email': email,
       'password': password
     })
-    login = client.post('/users/login', json={
+    login = client.post('/api/users/login', json={
       'email': email,
       'password': password
     })

@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.event_service import EventService
 from app.schemas import EventSchema
 
-events_bp = Blueprint('events', __name__, url_prefix='/events')
+events_bp = Blueprint('events', __name__, url_prefix='/api/events')
 
 event_schema = EventSchema()
 events_schema = EventSchema(many=True)
@@ -33,7 +33,7 @@ def get_event(event_id: int):
 def create_event():
     """Create a new event owned by the current user."""
     data = request.get_json() or {}
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     event = EventService.create_event(user_id, data)
     return jsonify(event_schema.dump(event)), 201
 
@@ -41,7 +41,7 @@ def create_event():
 @jwt_required()
 def update_event(event_id: int):
     """Update an existing event if owned by user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json() or {}
     event = EventService.update_event(event_id, user_id, data)
     return jsonify(event_schema.dump(event)), 200
@@ -50,6 +50,6 @@ def update_event(event_id: int):
 @jwt_required()
 def delete_event(event_id: int):
     """Delete an event if owned by user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     EventService.delete_event(event_id, user_id)
     return jsonify({'message': 'Event deleted'}), 200
