@@ -7,6 +7,9 @@ function setToken(token) {
 function getToken() {
   return localStorage.getItem("jwt");
 }
+function clearToken() {
+  localStorage.removeItem("jwt");
+}
 function authHeader() {
   return { Authorization: `Bearer ${getToken()}` };
 }
@@ -105,5 +108,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       alert("You are now attending!");
     };
+  }
+
+  if (/^\/users\/\d+$/.test(path)) {
+    const logoutForm = document.getElementById("logout-form");
+    if (logoutForm) {
+      logoutForm.onsubmit = (e) => {
+        e.preventDefault();
+        clearToken();
+        window.location = "/login";
+      };
+    }
   }
 });
