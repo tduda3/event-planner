@@ -46,6 +46,7 @@ def create_app(config: dict = None) -> Flask:
 
     migrate.init_app(app, db)
     jwt.init_app(app)
+
     # avoid https redirect errors when developing locally
     # only provide a simple Content-Security-Policy, skip HSTS to avoid
     # certificate requirements in dev or test environments
@@ -53,10 +54,6 @@ def create_app(config: dict = None) -> Flask:
         app,
         force_https=False,
         strict_transport_security=False,
-        content_security_policy={"default-src": ["'self'"]},
-    )
-
-
 
     # Global error handlers
     @app.errorhandler(UserValidationError)
@@ -88,8 +85,6 @@ def create_app(config: dict = None) -> Flask:
     app.register_blueprint(registrations_bp)
     app.register_blueprint(frontend_bp)
 
-    @app.route('/')
-    def index():
-        return render_template('index.html')
+
 
     return app
