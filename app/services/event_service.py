@@ -30,7 +30,6 @@ class EventService:
             owner_id=owner_id
         )
         db.session.add(new_event)
-        # Commit so event is immediately available to queries
         db.session.commit()
         return new_event
 
@@ -53,7 +52,6 @@ class EventService:
         if 'title' in data:
             event.title = data['title']
 
-        #datetime required
         if 'datetime' in data:
             try:
                 event.datetime = datetime.fromisoformat(data['datetime'])

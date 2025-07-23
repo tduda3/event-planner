@@ -11,7 +11,6 @@ from app.exceptions import (
     PermissionError,
 )
 
-# global extensions
 talisman = Talisman()
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,23 +21,19 @@ def create_app(config: dict = None) -> Flask:
     """Application factory. Initializes Flask app, extensions, error handlers, and blueprints."""
     app = Flask(__name__)
 
-    # Default configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/postgres'
-    )  # keep DB credentials in env vars
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_secret_key')
     app.config['DEBUG'] = os.getenv('FLASK_DEBUG', True)
     app.config['TESTING'] = False
     app.config['ENV'] = os.getenv('FLASK_ENV', 'development')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_jwt_secret')
-    # secrets pulled from env vars to avoid leaks
 
-    # Override defaults with testing or other config if provided
     if config:
         app.config.update(config)
 
-    # Initialize extensions
     db.init_app(app)
 
     with app.app_context():
@@ -46,9 +41,6 @@ def create_app(config: dict = None) -> Flask:
 
     migrate.init_app(app, db)
     jwt.init_app(app)
-    # avoid https redirect errors when developing locally
-    # only provide a simple Content-Security-Policy, skip HSTS to avoid
-    # certificate requirements in dev or test environments
     talisman.init_app(
         app,
         force_https=False,
@@ -63,7 +55,6 @@ def create_app(config: dict = None) -> Flask:
     )
 
 
-    # Global error handlers
     @app.errorhandler(UserValidationError)
     def handle_user_validation(error):
         return jsonify({'error': str(error)}), 400
@@ -80,7 +71,6 @@ def create_app(config: dict = None) -> Flask:
     def handle_permission_error(error):
         return jsonify({'error': str(error)}), 403
 
-    # Register blueprints
     from app.users.routes import users_bp
     from app.events.routes import events_bp
     from app.home import home_bp
