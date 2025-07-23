@@ -10,4 +10,5 @@ def home():
 @home_bp.route('/dashboard')
 @jwt_required()
 def dashboard():
-    return redirect(url_for('events.get_events'))
+    """Redirect logged in users to the events page."""
+    return redirect(url_for('frontend.events_page'))

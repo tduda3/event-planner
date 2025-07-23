@@ -3,7 +3,19 @@
 <p><strong>Date/Time:</strong> {{ event.datetime }}</p>
 <p><strong>Location:</strong> {{ event.location }}</p>
 <p>{{ event.description }}</p>
+<p><strong>Attendees:</strong> {{ attendee_count }}</p>
 <button id="rsvp-button" class="btn btn-primary">
   {% if attending %}Attending{% else %}Attend{% endif %}
 </button>
+<a href="/api/events/{{ event.id }}.ics" class="btn btn-secondary ml-2">Add to calendar</a>
+<div id="owner-controls" data-owner-id="{{ event.owner_id }}" style="display: none" class="mt-3">
+<form id="update-event-form">
+  <input type="text" name="title" value="{{ event.title }}" class="form-control mb-2" required />
+  <input type="datetime-local" name="datetime" value="{{ event.datetime.strftime('%Y-%m-%dT%H:%M:%S') }}" class="form-control mb-2" required />
+  <input type="text" name="location" value="{{ event.location }}" class="form-control mb-2" required />
+  <textarea name="description" class="form-control mb-2">{{ event.description }}</textarea>
+  <button type="submit" class="btn btn-primary">Update Event</button>
+  <button id="delete-event" type="button" class="btn btn-danger ml-2">Delete Event</button>
+</form>
+</div>
 {% endblock %}

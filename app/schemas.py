@@ -13,6 +13,10 @@ class EventSchema(Schema):
     location = fields.Str(required=True)
     description = fields.Str(allow_none=True)
     owner_id = fields.Int(dump_only=True)
+    attendee_count = fields.Method("get_attendee_count", dump_only=True)
+
+    def get_attendee_count(self, obj):
+        return len(obj.registrations)
 
 class RegistrationSchema(Schema):
     id = fields.Int(dump_only=True)
