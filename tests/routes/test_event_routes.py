@@ -94,6 +94,20 @@ def test_delete_event_success(client):
     assert resp.status_code == 200
 
 
+def test_delete_event_with_registrations(client):
+    owner = register_and_login(client)
+    create = client.post('/api/events/', json=event_payload(), headers={'Authorization': f'Bearer {owner}'})
+    event_id = create.get_json()['id']
+
+    guest = register_and_login(client, username='guest', email='guest@example.com')
+    client.post(f'/api/events/{event_id}/register', headers={'Authorization': f'Bearer {guest}'})
+
+    resp = client.delete(f'/api/events/{event_id}', headers={'Authorization': f'Bearer {owner}'})
+    assert resp.status_code == 200
+    get_resp = client.get(f'/api/events/{event_id}')
+    assert get_resp.status_code == 404
+
+
 def test_delete_event_not_found(client):
     token = register_and_login(client)
     resp = client.delete('/api/events/999', headers={'Authorization': f'Bearer {token}'})
@@ -151,3 +165,4 @@ def test_event_attendee_count(client):
     assert list_resp.status_code == 200
     list_data = list_resp.get_json()
     assert list_data['events'][0]['attendee_count'] == 1
+
