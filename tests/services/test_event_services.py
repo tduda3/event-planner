@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime
 from app.services.event_service import EventService
 from app.exceptions import UserValidationError, NotFoundError, PermissionError
-from app.models import Event, User
+from app.models import Event, User, Registration
 
 
 def test_create_event_success(db):
@@ -64,5 +64,27 @@ def test_delete_event(db):
     })
     # should not raise
     EventService.delete_event(event.id, owner.id)
+    with pytest.raises(NotFoundError):
+        EventService.get_event(event.id)
+
+
+def test_delete_event_with_registrations(db):
+    owner = User(username='dan', email='dan@example.com', password_hash='h')
+    guest = User(username='guest', email='guest@example.com', password_hash='h')
+    db.session.add_all([owner, guest])
+    db.session.commit()
+    event = EventService.create_event(owner.id, {
+        'title': 'Brunch',
+        'datetime': '2025-11-01T10:00:00',
+        'location': 'Cafe',
+        'description': ''
+    })
+    reg = Registration(user_id=guest.id, event_id=event.id)
+    db.session.add(reg)
+    db.session.commit()
+
+    EventService.delete_event(event.id, owner.id)
+
+    assert Registration.query.count() == 0
     with pytest.raises(NotFoundError):
         EventService.get_event(event.id)

@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.registration_service import RegistrationService
 from app.schemas import RegistrationSchema
 
-registrations_bp = Blueprint('registrations', __name__)
+registrations_bp = Blueprint('registrations', __name__, url_prefix='/api')
 reg_schema = RegistrationSchema()
 regs_schema = RegistrationSchema(many=True)
 
