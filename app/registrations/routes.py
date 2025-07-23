@@ -1,5 +1,5 @@
 # app/registrations/routes.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.registration_service import RegistrationService
 from app.schemas import RegistrationSchema
