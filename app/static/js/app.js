@@ -14,6 +14,15 @@ function authHeader() {
   return { Authorization: `Bearer ${getToken()}` };
 }
 
+async function handleError(res, fallback) {
+  try {
+    const data = await res.json();
+    alert(data.error || fallback);
+  } catch {
+    alert(fallback);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
 
@@ -43,8 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
           password: f.password.value,
         }),
       });
-      if (res.ok) window.location = "/login";
-      else alert("Registration failed");
+      if (res.ok) {
+        window.location = "/login";
+      } else {
+        await handleError(res, "Registration failed");
+      }
     };
   }
 
@@ -64,7 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const { access_token } = await res.json();
         setToken(access_token);
         window.location = "/events";
-      } else alert("Login failed");
+      } else {
+        await handleError(res, "Login failed");
+      }
     };
   }
 
@@ -82,8 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
           description: f.description.value,
         }),
       });
-      if (res.ok) window.location.reload();
-      else alert("Create failed");
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        await handleError(res, "Create failed");
+      }
     };
 
     document.querySelectorAll(".rsvp-btn").forEach((btn) => {
@@ -140,8 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
             description: f.description.value,
           }),
         });
-        if (res.ok) window.location.reload();
-        else alert("Update failed");
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          await handleError(res, "Update failed");
+        }
       };
     }
 

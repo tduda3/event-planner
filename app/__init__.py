@@ -53,9 +53,14 @@ def create_app(config: dict = None) -> Flask:
         app,
         force_https=False,
         strict_transport_security=False,
-        content_security_policy={"default-src": ["'self'"]},
+        content_security_policy={
+            "default-src": [
+                "'self'",
+                "https://stackpath.bootstrapcdn.com",
+                "https://code.jquery.com",
+            ]
+        },
     )
-
 
 
     # Global error handlers
