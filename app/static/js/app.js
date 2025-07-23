@@ -1,4 +1,3 @@
-// app/static/js/app.js
 const API_BASE = "/api";
 
 function setToken(token) {

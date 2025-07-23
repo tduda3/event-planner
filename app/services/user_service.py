@@ -14,10 +14,8 @@ class UserService:
             raise UserValidationError('Username, email, and password are required')
         if '@' not in email:
             raise UserValidationError('Invalid email address')
-        #Enforce basic strong password practices
         if len(password) < 8:
             raise UserValidationError('Password must be at least 8 characters')
-        # Check for existing user
         if User.query.filter((User.username == username) | (User.email == email)).first():
             raise UserValidationError('User with that username or email already exists')
         # SQLAlchemy parameter binding thwarts SQL injection
