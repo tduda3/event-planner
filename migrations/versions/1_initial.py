@@ -1,6 +1,6 @@
 """Initial schema
 
-Revision ID: 970db1fb4a00
+Revision ID: 1
 Revises: 
 Create Date: 2025-07-23 00:00:00.000000
 """
@@ -8,7 +8,7 @@ Create Date: 2025-07-23 00:00:00.000000
 from alembic import op
 import sqlalchemy as sa
 
-revision = '970db1fb4a00'
+revision = '1'
 down_revision = None
 branch_labels = None
 depends_on = None

@@ -18,14 +18,7 @@ A simple Flask application for creating and attending events.
   variables loaded via `.env`
 - SQLAlchemy parameter binding guards against SQL injection
 - Ownership checks before update/delete prevent IDOR issues
-- Flask-Talisman sets a basic Content-Security-Policy that also allows
-  Bootstrap and jQuery from their CDNs
-
-## Software Engineering Notes
-
-- Service layer classes encapsulate business logic
-- Custom exceptions map to API-friendly error responses
-- Unit tests cover routes and services
+- Flask-Talisman sets a basic Content-Security-Policy
 
 ## Docker
 
