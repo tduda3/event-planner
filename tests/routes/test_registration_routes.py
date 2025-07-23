@@ -5,7 +5,7 @@ def test_rsvp_event_success(client):
     token = register_and_login(client)
     # Create an event
     create_resp = client.post(
-        '/events/',
+        '/api/events/',
         json=event_payload(),
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -14,7 +14,7 @@ def test_rsvp_event_success(client):
 
     # RSVP to the event
     resp = client.post(
-        f'/events/{event_id}/register',
+        f'/api/events/{event_id}/register',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 201
@@ -24,7 +24,7 @@ def test_rsvp_event_success(client):
 def test_rsvp_event_not_found(client):
     token = register_and_login(client)
     resp = client.post(
-        '/events/999/register',
+        '/api/events/999/register',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 404
@@ -33,20 +33,20 @@ def test_cancel_registration_success(client):
     token = register_and_login(client)
     # Create and RSVP
     create_resp = client.post(
-        '/events/',
+        '/api/events/',
         json=event_payload(),
         headers={'Authorization': f'Bearer {token}'}
     )
     event_id = create_resp.get_json()['id']
     reg_resp = client.post(
-        f'/events/{event_id}/register',
+        f'/api/events/{event_id}/register',
         headers={'Authorization': f'Bearer {token}'}
     )
     reg_id = reg_resp.get_json()['id']
 
     # Cancel the registration
     resp = client.delete(
-        f'/registrations/{reg_id}',
+        f'/api/registrations/{reg_id}',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 200
@@ -58,20 +58,20 @@ def test_cancel_other_user_forbidden(client):
     token2 = register_and_login(client, username='bob', email='bob@example.com')
     # Create and RSVP under token1
     create_resp = client.post(
-        '/events/',
+        '/api/events/',
         json=event_payload(),
         headers={'Authorization': f'Bearer {token1}'}
     )
     event_id = create_resp.get_json()['id']
     reg_resp = client.post(
-        f'/events/{event_id}/register',
+        f'/api/events/{event_id}/register',
         headers={'Authorization': f'Bearer {token1}'}
     )
     reg_id = reg_resp.get_json()['id']
 
     # Attempt cancel under token2
     resp = client.delete(
-        f'/registrations/{reg_id}',
+        f'/api/registrations/{reg_id}',
         headers={'Authorization': f'Bearer {token2}'}
     )
     assert resp.status_code == 403
@@ -80,19 +80,19 @@ def test_list_user_registrations(client):
     token = register_and_login(client)
     # Create and RSVP
     create_resp = client.post(
-        '/events/',
+        '/api/events/',
         json=event_payload(),
         headers={'Authorization': f'Bearer {token}'}
     )
     event_id = create_resp.get_json()['id']
     client.post(
-        f'/events/{event_id}/register',
+        f'/api/events/{event_id}/register',
         headers={'Authorization': f'Bearer {token}'}
     )
 
     # List registrations
     resp = client.get(
-        '/users/1/registrations',
+        '/api/users/1/registrations',
         headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code == 200

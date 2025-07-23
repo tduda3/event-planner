@@ -3,9 +3,16 @@ from flask import Flask, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from app.exceptions import UserValidationError, AuthenticationError, NotFoundError, PermissionError
+from flask_talisman import Talisman
+from app.exceptions import (
+    UserValidationError,
+    AuthenticationError,
+    NotFoundError,
+    PermissionError,
+)
 
 # global extensions
+talisman = Talisman()
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
@@ -18,13 +25,14 @@ def create_app(config: dict = None) -> Flask:
     # Default configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/postgres'
-    )
+    )  # keep DB credentials in env vars
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_secret_key')
     app.config['DEBUG'] = os.getenv('FLASK_DEBUG', True)
     app.config['TESTING'] = False
     app.config['ENV'] = os.getenv('FLASK_ENV', 'development')
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_jwt_secret')
+    # secrets pulled from env vars to avoid leaks
 
     # Override defaults with testing or other config if provided
     if config:
@@ -38,6 +46,21 @@ def create_app(config: dict = None) -> Flask:
 
     migrate.init_app(app, db)
     jwt.init_app(app)
+    # avoid https redirect errors when developing locally
+    # only provide a simple Content-Security-Policy, skip HSTS to avoid
+    # certificate requirements in dev or test environments
+    talisman.init_app(
+        app,
+        force_https=False,
+        strict_transport_security=False,
+        content_security_policy={
+            "default-src": [
+                "'self'",
+                "https://stackpath.bootstrapcdn.com",
+                "https://code.jquery.com",
+            ]
+        },
+    )
 
 
 

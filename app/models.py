@@ -17,12 +17,22 @@ class Event(db.Model):
     description = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', backref=db.backref('events', lazy=True))
+    registrations = db.relationship(
+        'Registration',
+        back_populates='event',
+        cascade='all, delete-orphan',
+        lazy=True,
+    )
 
 class Registration(db.Model):
     __tablename__ = 'registrations'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    event_id = db.Column(
+        db.Integer,
+        db.ForeignKey('events.id', ondelete='CASCADE'),
+        nullable=False,
+    )
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
     user = db.relationship('User', backref=db.backref('registrations', lazy=True))
-    event = db.relationship('Event', backref=db.backref('registrations', lazy=True))
+    event = db.relationship('Event', back_populates='registrations')
