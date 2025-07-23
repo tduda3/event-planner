@@ -37,7 +37,7 @@ If the container exits immediately with a message about an incompatible data
 directory (perhaps left over from an older Postgres version), remove the volume
 with `docker compose down -v` and start again.
 
-When the logs show "database system is ready to accept connections," run the initial migration:
+When the logs show "database system is ready to accept connections," run the initial migration to create the tables:
 
 ```bash
 docker compose run --rm app flask db upgrade
