@@ -71,8 +71,6 @@ def create_app(config: dict = None) -> Flask:
     app.register_blueprint(registrations_bp)
     app.register_blueprint(frontend_bp)
 
-    @app.route('/')
-    def index():
-        return render_template('index.html')
+
 
     return app
