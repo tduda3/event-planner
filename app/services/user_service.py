@@ -20,6 +20,7 @@ class UserService:
         # Check for existing user
         if User.query.filter((User.username == username) | (User.email == email)).first():
             raise UserValidationError('User with that username or email already exists')
+        # SQLAlchemy parameter binding thwarts SQL injection
         password_hash = generate_password_hash(password)
         new_user = User(username=username, email=email, password_hash=password_hash)
         db.session.add(new_user)

@@ -48,6 +48,7 @@ class EventService:
         event = EventService.get_event(event_id)
         if event.owner_id != owner_id:
             raise PermissionError('You do not have permission to update this event')
+        # ensure only owner can modify to avoid IDOR
 
         if 'title' in data:
             event.title = data['title']
@@ -72,13 +73,14 @@ class EventService:
         event = EventService.get_event(event_id)
         if event.owner_id != owner_id:
             raise PermissionError('You do not have permission to delete this event')
+        # avoid IDOR by verifying ownership before delete
         db.session.delete(event)
         db.session.commit()
 
     @staticmethod
     def list_events(filters: dict = None, page: int = 1, per_page: int = 20):
         """Return paginated list of events."""
-        query = Event.query
+        query = Event.query  # ORM escapes inputs to prevent SQL injection
         if filters:
             owner = filters.get('owner_id')
             if owner:

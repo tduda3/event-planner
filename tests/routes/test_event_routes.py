@@ -165,4 +165,3 @@ def test_event_attendee_count(client):
     assert list_resp.status_code == 200
     list_data = list_resp.get_json()
     assert list_data['events'][0]['attendee_count'] == 1
-

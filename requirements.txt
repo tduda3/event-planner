@@ -8,3 +8,4 @@ Werkzeug==2.1.1
 marshmallow
 marshmallow-SQLAlchemy
 pytest>=7.0
+Flask-Talisman==1.1.0

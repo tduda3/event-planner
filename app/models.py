@@ -36,4 +36,3 @@ class Registration(db.Model):
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
     user = db.relationship('User', backref=db.backref('registrations', lazy=True))
     event = db.relationship('Event', back_populates='registrations')
-
