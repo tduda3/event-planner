@@ -1,5 +1,5 @@
 // app/static/js/app.js
-const API_BASE = "";
+const API_BASE = "/api";
 
 function setToken(token) {
   localStorage.setItem("jwt", token);
@@ -7,12 +7,28 @@ function setToken(token) {
 function getToken() {
   return localStorage.getItem("jwt");
 }
+function clearToken() {
+  localStorage.removeItem("jwt");
+}
 function authHeader() {
   return { Authorization: `Bearer ${getToken()}` };
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
+
+  const profileLink = document.getElementById("profile-link");
+  if (profileLink) {
+    const token = getToken();
+    if (token) {
+      const payload = JSON.parse(
+        atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+      );
+      const userId = payload.sub || payload.identity;
+      profileLink.href = `/users/${userId}`;
+      profileLink.style.display = "block";
+    }
+  }
 
   if (path === "/register") {
     document.getElementById("register-form").onsubmit = async (e) => {
@@ -84,6 +100,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (/^\/events\/\d+$/.test(path)) {
+    const ownerControls = document.getElementById("owner-controls");
+    if (ownerControls) {
+      const token = getToken();
+      if (token) {
+        const payload = JSON.parse(
+          atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+        );
+        const userId = parseInt(payload.sub || payload.identity);
+        const ownerId = parseInt(ownerControls.dataset.ownerId);
+        if (userId === ownerId) {
+          ownerControls.style.display = "block";
+        }
+      }
+    }
+
     document.getElementById("rsvp-button").onclick = async () => {
       const id = path.split("/").pop();
       await fetch(`${API_BASE}/events/${id}/register`, {
@@ -92,5 +123,50 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       alert("You are now attending!");
     };
+
+    const updateForm = document.getElementById("update-event-form");
+    if (updateForm) {
+      updateForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const id = path.split("/").pop();
+        const f = e.target;
+        const res = await fetch(`${API_BASE}/events/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeader() },
+          body: JSON.stringify({
+            title: f.title.value,
+            datetime: f.datetime.value,
+            location: f.location.value,
+            description: f.description.value,
+          }),
+        });
+        if (res.ok) window.location.reload();
+        else alert("Update failed");
+      };
+    }
+
+    const deleteBtn = document.getElementById("delete-event");
+    if (deleteBtn) {
+      deleteBtn.onclick = async () => {
+        if (!confirm("Delete this event?")) return;
+        const id = path.split("/").pop();
+        await fetch(`${API_BASE}/events/${id}`, {
+          method: "DELETE",
+          headers: authHeader(),
+        });
+        window.location = "/events";
+      };
+    }
+  }
+
+  if (/^\/users\/\d+$/.test(path)) {
+    const logoutForm = document.getElementById("logout-form");
+    if (logoutForm) {
+      logoutForm.onsubmit = (e) => {
+        e.preventDefault();
+        clearToken();
+        window.location = "/login";
+      };
+    }
   }
 });
