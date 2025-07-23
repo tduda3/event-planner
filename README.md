@@ -27,13 +27,19 @@ A simple Flask application for creating and attending events.
 
 ## Docker
 
-Copy `.env.example` to `.env` and adjust credentials. Start the database and
-initialize the schema on first run:
+Copy `.env.example` to `.env` and adjust credentials. Start the database container first:
 
 ```bash
 docker compose up -d db
+```
+
+Wait a few seconds for Postgres to be ready, then run the initial migration:
+
+```bash
 docker compose run --rm app flask db upgrade
 ```
+
+(The Flask command may suggest installing `python-dotenv`; it's safe to ignore because Docker already loads the environment.)
 
 Then launch the full stack:
 
