@@ -67,12 +67,14 @@ def event_detail_page(event_id):
     attending = False
     if user_id and Registration.query.filter_by(user_id=user_id, event_id=event_id).first():
         attending = True
+    attendee_count = len(event.registrations)
     is_owner = user_id is not None and int(user_id) == event.owner_id
     return render_template(
         'event_detail.html',
         event=event,
         attending=attending,
-        is_owner=is_owner
+        is_owner=is_owner,
+        attendee_count=attendee_count
     )
 
 

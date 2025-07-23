@@ -100,6 +100,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (/^\/events\/\d+$/.test(path)) {
+    const ownerControls = document.getElementById("owner-controls");
+    if (ownerControls) {
+      const token = getToken();
+      if (token) {
+        const payload = JSON.parse(
+          atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+        );
+        const userId = parseInt(payload.sub || payload.identity);
+        const ownerId = parseInt(ownerControls.dataset.ownerId);
+        if (userId === ownerId) {
+          ownerControls.style.display = "block";
+        }
+      }
+    }
+
     document.getElementById("rsvp-button").onclick = async () => {
       const id = path.split("/").pop();
       await fetch(`${API_BASE}/events/${id}/register`, {
