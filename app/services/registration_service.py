@@ -31,6 +31,7 @@ class RegistrationService:
             raise NotFoundError(f'Registration with id {registration_id} not found')
         if reg.user_id != user_id:
             raise PermissionError('Cannot cancel registration for another user')
+        # ensure user owns registration - prevents IDOR
         db.session.delete(reg)
         db.session.commit()
 
