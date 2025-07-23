@@ -46,8 +46,13 @@ def create_app(config: dict = None) -> Flask:
 
     migrate.init_app(app, db)
     jwt.init_app(app)
+    # avoid https redirect errors when developing locally
+    # only provide a simple Content-Security-Policy, skip HSTS to avoid
+    # certificate requirements in dev or test environments
     talisman.init_app(
         app,
+        force_https=False,
+        strict_transport_security=False,
         content_security_policy={"default-src": ["'self'"]},
     )
 

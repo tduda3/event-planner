@@ -1,12 +1,10 @@
-FROM python:3.12
-WORKDIR /home/timmy/event-planner
+FROM python:3.12-slim
+WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . .
+
 EXPOSE 5000
-
-COPY app ./app
-COPY run.py ./
-
-CMD ["python" , "run.py"]
+CMD ["python", "run.py"]
