@@ -11,7 +11,7 @@ SAMPLE_EVENTS = [
     ("Python Meetup", "Community Center", "Weekly Python enthusiast meetup"),
     ("Startup Pitch Night", "Innovation Hub", "Local startups pitch to investors"),
     ("Art Exhibition", "City Gallery", "Opening night of modern art show"),
-    ("Yoga in the Park", "Riverside Park", "Outdoor yoga session for all levels"),
+    ("Pilates in the Park", "Riverside Park", "Outdoor pilates session for all levels"),
     ("Jazz Concert", "Downtown Club", "Evening of live jazz music"),
     ("Tech Careers Fair", "Convention Center", "Meet tech companies hiring"),
     ("Cooking Workshop", "Culinary School", "Hands-on Italian cooking class"),

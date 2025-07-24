@@ -12,17 +12,11 @@ A simple Flask application for creating and attending events.
 - User profile pages showing created and attending events
 - Optional script to seed the database with demo events
 
-## Security Highlights
+## How to run with Docker
 
-- Secrets such as `SECRET_KEY` and database credentials come from environment
-  variables loaded via `.env`
-- SQLAlchemy parameter binding guards against SQL injection
-- Ownership checks before update/delete prevent IDOR issues
-- Flask-Talisman sets a basic Content-Security-Policy
+Copy `.env.example` to `.env` and adjust credentials.
 
-## Docker
-
-Copy `.env.example` to `.env` and adjust credentials. Start the database container first and wait until it's ready:
+Start the database container:
 
 ```bash
 docker compose up -d db
@@ -56,3 +50,12 @@ Execute the unit tests locally with `pytest -q`. To run them in Docker:
 ```bash
 docker compose run --rm app pytest -q
 ```
+
+## Security Highlights
+
+- Secrets such as `SECRET_KEY` and database credentials come from environment
+  variables loaded via `.env`
+- SQLAlchemy parameter binding guards against SQL injection
+- Ownership checks before update/delete prevent IDOR issues
+- Flask-Talisman sets a basic Content-Security-Policy
+- Bcrypt salting and hashing
