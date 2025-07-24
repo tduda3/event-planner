@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
 from flask_jwt_extended import create_access_token
 from app.models import User
 from app import db
@@ -19,7 +19,7 @@ class UserService:
         if User.query.filter((User.username == username) | (User.email == email)).first():
             raise UserValidationError('User with that username or email already exists')
         # SQLAlchemy parameter binding thwarts SQL injection
-        password_hash = generate_password_hash(password)
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         new_user = User(username=username, email=email, password_hash=password_hash)
         db.session.add(new_user)
         db.session.commit()
@@ -31,7 +31,7 @@ class UserService:
         if not email or not password:
             raise AuthenticationError('Email and password are required')
         user = User.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password_hash, password):
+        if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
             raise AuthenticationError('Invalid credentials')
         token = create_access_token(identity=str(user.id))
         return token
