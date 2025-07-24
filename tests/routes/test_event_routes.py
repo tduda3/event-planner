@@ -19,7 +19,7 @@ def test_create_event_success(client):
     )
     assert resp.status_code == 201
     data = resp.get_json()
-    assert data['title'] == 'Networking Lunch'
+    assert data['title'] == 'Lunch and Learn'
     assert data['owner_id'] == 1
 
 
@@ -44,7 +44,7 @@ def test_get_event_success(client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data['id'] == event_id
-    assert data['title'] == 'Networking Lunch'
+    assert data['title'] == 'Lunch and Learn'
 
 
 def test_get_event_not_found(client):

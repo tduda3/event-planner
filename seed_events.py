@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from app import create_app, db
+from app import create_app
 from app.models import User
 from app.services.user_service import UserService
 from app.services.event_service import EventService
