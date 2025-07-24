@@ -8,19 +8,23 @@ frontend_bp = Blueprint('frontend', __name__)
 
 @frontend_bp.route('/home')
 def home():
+    """Render the home page."""
     return render_template('home.html')
 
 @frontend_bp.route('/register')
 def register_page():
+    """Show the registration page."""
     return render_template('register.html')
 
 @frontend_bp.route('/login')
 def login_page():
+    """Show the login page."""
     return render_template('login.html')
 
 @frontend_bp.route('/events')
 @jwt_required(optional=True)
 def events_page():
+    """Display a list of events for the user."""
     search = request.args.get('search', '')
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
@@ -61,6 +65,7 @@ def events_page():
 @frontend_bp.route('/events/<int:event_id>')
 @jwt_required(optional=True)
 def event_detail_page(event_id):
+    """Show details for a single event."""
     event = EventService.get_event(event_id)
     user_id = get_jwt_identity()
     attending = False
@@ -79,6 +84,7 @@ def event_detail_page(event_id):
 
 @frontend_bp.route('/users/<int:user_id>')
 def user_profile_page(user_id):
+    """Render a user's profile page."""
     user = UserService.get_user_by_id(user_id)
     created = Event.query.filter_by(owner_id=user_id).order_by(Event.datetime).all()
     attending = (
