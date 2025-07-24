@@ -39,7 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (path === "/register") {
-    document.getElementById("register-form").onsubmit = async (e) => {
+    const form = document.getElementById("register-form");
+    if (form) form.onsubmit = async (e) => {
       e.preventDefault();
       const f = e.target;
       const res = await fetch(API_BASE + "/users/register", {
@@ -60,7 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (path === "/login") {
-    document.getElementById("login-form").onsubmit = async (e) => {
+    const form = document.getElementById("login-form");
+    if (form) form.onsubmit = async (e) => {
       e.preventDefault();
       const f = e.target;
       const res = await fetch(API_BASE + "/users/login", {

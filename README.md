@@ -4,7 +4,7 @@ A simple Flask application for creating and attending events.
 
 ## Features
 
-- User registration and JWT-based login
+- Google OAuth login with JWT tokens for the API
 - Create, update and delete your own events
 - RSVP to events created by others
 - Search and pagination on the events list
@@ -15,7 +15,7 @@ A simple Flask application for creating and attending events.
 ## Security Highlights
 
 - Secrets such as `SECRET_KEY` and database credentials come from environment
-  variables loaded via `.env`
+  variables loaded via `.env` (including Google OAuth credentials)
 - SQLAlchemy parameter binding guards against SQL injection
 - Ownership checks before update/delete prevent IDOR issues
 - Flask-Talisman sets a basic Content-Security-Policy
@@ -48,6 +48,12 @@ docker compose up --build
 
 The service listens on port 5000. Visit `http://localhost:5000` to use the app.
 API endpoints live under `/api`.
+
+### Google OAuth Setup
+
+Populate `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in your `.env` file with
+credentials from the Google developer console. The OAuth callback URL should be
+`http://localhost:5000/callback`.
 
 ## Running Tests
 

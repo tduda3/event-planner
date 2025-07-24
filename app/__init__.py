@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_talisman import Talisman
+from authlib.integrations.flask_client import OAuth
 from app.exceptions import (
     UserValidationError,
     AuthenticationError,
@@ -15,6 +16,7 @@ talisman = Talisman()
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
+oauth = OAuth()
 
 
 def create_app(config: dict = None) -> Flask:
@@ -41,6 +43,14 @@ def create_app(config: dict = None) -> Flask:
 
     migrate.init_app(app, db)
     jwt.init_app(app)
+    oauth.init_app(app)
+    oauth.register(
+        name='google',
+        client_id=os.getenv('GOOGLE_CLIENT_ID'),
+        client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
     talisman.init_app(
         app,
         force_https=False,
@@ -76,12 +86,14 @@ def create_app(config: dict = None) -> Flask:
     from app.home import home_bp
     from app.registrations.routes import registrations_bp
     from app.frontend.routes import frontend_bp
+    from app.oauth import oauth_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(events_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(registrations_bp)
     app.register_blueprint(frontend_bp)
+    app.register_blueprint(oauth_bp)
 
 
 

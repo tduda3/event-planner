@@ -9,3 +9,6 @@ marshmallow
 marshmallow-SQLAlchemy
 pytest>=7.0
 Flask-Talisman==1.1.0
+bcrypt
+Authlib
+requests

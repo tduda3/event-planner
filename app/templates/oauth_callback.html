@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<p>Login successful. Redirecting...</p>
+<script>
+localStorage.setItem('jwt', '{{ token }}');
+window.location = '/events';
+</script>
+{% endblock %}
